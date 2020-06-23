@@ -19,3 +19,13 @@ target_link_libraries(greedySubMatching PRIVATE ra)
 
 target_include_directories(greedySubMatching PRIVATE "${PROJECT_SOURCE_DIR}/include")
 
+#executable locallazygreedy
+add_executable(llg submodular_local_greedy_matching_test.cpp)
+
+target_compile_features(llg PRIVATE cxx_std_11)
+target_compile_options(llg PRIVATE -O3 -fopenmp)
+
+target_link_libraries(llg PRIVATE ra)
+
+target_include_directories(llg PRIVATE "${PROJECT_SOURCE_DIR}/include")
+

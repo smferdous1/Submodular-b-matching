@@ -117,7 +117,7 @@ void Input::readMtx(std::string fileName, LightGraph &G,int is_random,long seed,
         {
             if(is_random==1)
             {
-                weight =  minW + (int)((maxW-minW)*((double)rand()/(RAND_MAX)));
+                weight =  minW + ((maxW-minW)*((VAL_T)rand()/(RAND_MAX)));
             }
             //std::cout<<weight<<std::endl;
             adjList[u].push_back(v);

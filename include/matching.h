@@ -15,6 +15,7 @@ void greedyPerturbedMatching(LightGraph &, NODE_T [], WeightEdgeList &, SUM_T &,
 
 void submodularGreedyMatching(LightGraph &, NODE_T [], float, int, WeightEdgeList &, SUM_T &, NODE_T &,int = 1);
 void submodularGreedybMatching(LightGraph &, NODE_T [], int, float, int, WeightEdgeList &, SUM_T &, NODE_T &,int = 1);
+void localLazyGreedy(LightGraph &, NODE_T [], int, float, int, WeightEdgeList &, SUM_T &, NODE_T &,int = 1);
 
 void clusterEdges(NODE_T, WeightEdgeList&,int &);
 #endif

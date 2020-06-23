@@ -20,7 +20,7 @@ int main(int argc,char *argv[])
 
 
   LightGraph G;
-  graphInput.readMtx(fileName,G,0,5245213,1,100);
+  graphInput.readMtx(fileName,G,1,5245213,1,5);
   
   cout<<"read successful"<<endl;
   NODE_T n;
@@ -57,7 +57,7 @@ int main(int argc,char *argv[])
     totalTime = totalTime + endTime-startTime;
   }
   
-  cout << std::fixed<<std::setprecision(0)<<totalWeight<< " "<<matchingSize<<" "<<b*n/2-matchingSize<<" ";
+  cout << std::fixed<<std::setprecision(5)<<totalWeight<< " "<<matchingSize<<" "<<b*n/2-matchingSize<<" ";
 
   cout<< std::setprecision(4)<<2.0*matchingSize/n<<" "<<totalTime/nRun<<endl;
   
