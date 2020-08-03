@@ -57,7 +57,7 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], int b,float alpha, in
 
     while(!pq.empty())
     {
-        auto top = pq[0];
+        auto top = pq.front();
         std::pop_heap(pq.begin(),pq.end(),cmpbyFirst);
         pq.pop_back();
 
@@ -69,13 +69,14 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], int b,float alpha, in
 
         if(cV[u]<b && cV[v]<b )
         {
-            if(pq.empty() || topMargGain>=pq[0].first)
+            if(pq.empty() || topMargGain>=pq.front().first)
             {
                 matching.push_back(top.second);
                 cV[u]++;
                 cV[v]++;
                 matchingSize++;
-                totalWeight = totalWeight + top.second.weight;
+                //totalWeight = totalWeight + top.second.weight;
+                totalWeight = totalWeight + top.first;
                 cW[u ] += top.second.weight;
                 cW[v ] += top.second.weight;
             }

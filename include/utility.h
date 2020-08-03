@@ -4,6 +4,7 @@
 #include<sys/time.h>
 #include <algorithm>
 #include <math.h>
+#include <omp.h>
 #define VERY_LARGE_WEIGHT 99999
 
 

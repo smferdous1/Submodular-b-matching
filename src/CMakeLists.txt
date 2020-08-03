@@ -16,6 +16,7 @@ add_library(ra
     submodularGreedyMatching.cpp
     submodularGreedybMatching.cpp
     localLazyGreed.cpp
+    shmLocalLazyGreed.cpp
     cluster.cpp
     input.cpp
     utility.cpp
@@ -26,10 +27,11 @@ add_library(ra
 #    target_link_libraries(ra PUBLIC OpenMP::OpenMP_CXX)
 #endif()
 
+target_link_libraries(ra PUBLIC -qopenmp)
 #link light_graph
-target_link_libraries(ra PRIVATE
-    ${MKL_LIB_LINK}
-    )
+#target_link_libraries(ra PRIVATE
+# ${MKL_LIB_LINK}
+#)
 
 
 target_include_directories(ra PUBLIC
@@ -39,6 +41,6 @@ target_include_directories(ra PUBLIC
 
 # All users of this library will need at least C++11
 target_compile_features(ra PUBLIC cxx_std_11)
-target_compile_options(ra PRIVATE -Wall  -DMKL_ILP64 -m64 -O3 -ffast-math -fopenmp)
+target_compile_options(ra PRIVATE -O2 -qopenmp)
 
 

@@ -131,7 +131,9 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
                         std::pop_heap(pq[v].begin(),pq[v].end(),cmpbyFirst);
                         pq[v].pop_back();
 
-                        totalWeight = totalWeight + top.weight;
+                        //totalWeight = totalWeight + top.weight;
+                        //you have to add the marginal gain not the actual weight
+                        totalWeight = totalWeight + pq[i].front().first;
                         cW[u] += top.weight;
                         cW[v] += top.weight;
                     }
