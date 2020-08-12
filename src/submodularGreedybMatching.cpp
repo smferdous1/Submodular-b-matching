@@ -1,15 +1,11 @@
 #include "matching.h"
 #include <iostream>
 
+using std::cout;
+using std::endl;
+
 bool cmpbyFirst(const std::pair<VAL_T,WeightEdge> &T1,const std::pair<VAL_T,WeightEdge> &T2)
 {
-    if(T1.first == T2.first)
-    {
-        if(T1.second.e.u == T2.second.e.u) 
-            return T1.second.e.v > T2.second.e.v;
-        return T1.second.e.u > T2.second.e.u;
-    }
-        //return T1.second.id < T2.second.id;
     return T1.first < T2.first;
 }
 
@@ -21,39 +17,56 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], int b,float alpha, in
     std::cout<<n<<" "<<m<<std::endl;
     //zeroing out cV
     //
+    std::vector<VAL_T> cW(n);
     for(NODE_T i =0;i<n;i++)
     {
         cV[i] = 0;
+        cW[i] = 0.0;
     }
-    WeightEdgeList edgeList;
+    /*WeightEdgeList edgeList;
     edgeList.clear();
     edgeList.reserve(m);
 
-    G.createEdgeList(edgeList);
+    G.createEdgeList(edgeList);*/
 
     //The priority queue is a pair of <marginal gain, Edge>
     std::vector<std::pair<VAL_T,WeightEdge> >pq;
+
     pq.reserve(m);
-    for(EDGE_T i=0;i<m;i++)
+    /*for(EDGE_T i=0;i<m;i++)
     {
         NODE_T u = edgeList[i].e.u;
         NODE_T v = edgeList[i].e.v;
         VAL_T w = edgeList[i].weight;
 
         pq.push_back(std::make_pair(2*pow(w,alpha),edgeList[i]));
+    }*/
+    for(NODE_T i=0;i<n;i++)
+    {
+        for(EDGE_T j=G.IA[i];j<G.IA[i+1];j++)
+        {
+            NODE_T u = i;
+            NODE_T v = G.JA[j]; 
+            VAL_T w = G.A[j];
+
+            if(u<v)
+            {
+                //create a weighted edge for (u,v) and (v,u) and insert it to
+                //corresponding vector. j is the index of the common index of the edge
+                WeightEdge we ={{u,v},w,0,j,0};
+                pq.push_back(std::make_pair(2*pow(w,alpha),we));
+
+            }
+        }
+
     }
 
     //create the heap
     std::make_heap(pq.begin(),pq.end(),cmpbyFirst);
 
-    std::vector<VAL_T> cW;
-    cW.reserve(n+10);
-    for(int i=0;i<n;i++)
-    {
-        cW.push_back(0);
-    }
-
     matching.clear();
+    totalWeight = 0.0;
+    matchingSize = 0;
 
     while(!pq.empty())
     {
