@@ -4,7 +4,7 @@
 using std::cout;
 using std::endl;
 
-bool cmpbyFirst(const std::pair<VAL_T,WeightEdge> &T1,const std::pair<VAL_T,WeightEdge> &T2)
+bool cmpbyFirst(const std::pair<VAL_T,WeightEdgeSim> &T1,const std::pair<VAL_T,WeightEdgeSim> &T2)
 {
     return T1.first < T2.first;
 }
@@ -14,7 +14,7 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], int b,float alpha, in
 
     NODE_T n = G.numberOfNodes();
     EDGE_T m = G.numberOfEdges();
-    std::cout<<n<<" "<<m<<std::endl;
+    //std::cout<<n<<" "<<m<<std::endl;
     //zeroing out cV
     //
     std::vector<VAL_T> cW(n);
@@ -23,14 +23,14 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], int b,float alpha, in
         cV[i] = 0;
         cW[i] = 0.0;
     }
-    /*WeightEdgeList edgeList;
+    /*WeightEdgeSimList edgeList;
     edgeList.clear();
     edgeList.reserve(m);
 
     G.createEdgeList(edgeList);*/
 
     //The priority queue is a pair of <marginal gain, Edge>
-    std::vector<std::pair<VAL_T,WeightEdge> >pq;
+    std::vector<std::pair<VAL_T,WeightEdgeSim> >pq;
 
     pq.reserve(m);
     /*for(EDGE_T i=0;i<m;i++)
@@ -53,7 +53,7 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], int b,float alpha, in
             {
                 //create a weighted edge for (u,v) and (v,u) and insert it to
                 //corresponding vector. j is the index of the common index of the edge
-                WeightEdge we ={{u,v},w,0,j,0};
+                WeightEdgeSim we ={u,v,w};
                 pq.push_back(std::make_pair(2*pow(w,alpha),we));
 
             }
@@ -74,8 +74,8 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], int b,float alpha, in
         std::pop_heap(pq.begin(),pq.end(),cmpbyFirst);
         pq.pop_back();
 
-        NODE_T u = top.second.e.u;
-        NODE_T v = top.second.e.v;
+        NODE_T u = top.second.u;
+        NODE_T v = top.second.v;
         VAL_T w = top.second.weight;
 
         VAL_T topMargGain = pow(cW[u ]+w,alpha)-pow(cW[u ],alpha) + pow(cW[v ]+w,alpha)-pow(cW[v ],alpha);
@@ -84,7 +84,7 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], int b,float alpha, in
         {
             if(pq.empty() || topMargGain>=pq.front().first)
             {
-                matching.push_back(top.second);
+                //matching.push_back(top.second);
                 cV[u]++;
                 cV[v]++;
                 matchingSize++;

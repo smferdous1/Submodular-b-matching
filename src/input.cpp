@@ -101,8 +101,10 @@ void Input::readMtx(std::string fileName, LightGraph &G,int is_random,long seed,
     EDGE_T nnz;
     fileread >> nrow >> ncol >> nnz;
 
-    std::vector<std::vector<NODE_T> > adjList(nrow);
-    std::vector<std::vector<VAL_T> > adjWeight(nrow);
+    std::vector<std::vector<NODE_T> > adjList;
+    std::vector<std::vector<VAL_T> > adjWeight;
+    adjList.resize(nrow);
+    adjWeight.resize(nrow);
 
     NODE_T u;
     NODE_T v;
@@ -141,6 +143,7 @@ void Input::readMtx(std::string fileName, LightGraph &G,int is_random,long seed,
     EDGE_T k=0;
     for(NODE_T i=0;i<nrow;i++)
     {
+        
         for(NODE_T j=0;j<adjList[i].size();j++)
         {
 
@@ -149,11 +152,11 @@ void Input::readMtx(std::string fileName, LightGraph &G,int is_random,long seed,
             k++;
         }
         G.IA[i+1]= G.IA[i] + adjList[i].size();
-    }
+        /*adjList[i].resize(0);
+        adjList[i].shrink_to_fit();
+        adjWeight[i].resize(0);
+        adjWeight[i].shrink_to_fit();*/
 
-    //delete the vectors
-    for(NODE_T i=0;i<nrow;i++) 
-    {
         adjList[i].clear();
         std::vector<NODE_T>().swap(adjList[i]);
 
@@ -161,6 +164,18 @@ void Input::readMtx(std::string fileName, LightGraph &G,int is_random,long seed,
         std::vector<VAL_T>().swap(adjWeight[i]);
 
     }
+    ///std::cout<<"exiting.."<<std::endl;
+
+    //delete the vectors
+    /*for(NODE_T i=0;i<nrow;i++) 
+    {
+        adjList[i].clear();
+        std::vector<NODE_T>().swap(adjList[i]);
+
+        adjWeight[i].clear();
+        std::vector<VAL_T>().swap(adjWeight[i]);
+
+    }*/
     //close the file
     fileread.close();
 

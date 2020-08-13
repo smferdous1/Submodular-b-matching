@@ -5,6 +5,7 @@
 #include "matching.h"
 #include <iostream>
 
+
 //for numerical comparing.
 //if a and b are two real numbers comparison between them 
 //is unstable so a == b may not provide the desired output
@@ -15,7 +16,7 @@
 using std::cout;
 using std::endl;
 //A comparator function for heap
-bool cmpbyFirst(const std::pair<VAL_T,WeightEdge> &T1,const std::pair<VAL_T,WeightEdge> &T2)
+bool cmpbyFirst(const std::pair<VAL_T,WeightEdgeSim> &T1,const std::pair<VAL_T,WeightEdgeSim> &T2)
 {
     return T1.first < T2.first;
 }
@@ -29,12 +30,13 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
     NODE_T n = G.numberOfNodes();
     EDGE_T m = G.numberOfEdges();
 
-    std::cout<<n<<" "<<m<<std::endl;
     //This vector is for cumulative weights for each vertex
     //would be useful for calculating marginal gain
     std::vector<VAL_T> cW(n);
     //to track the matched vertices in some iteration
     bool *exposed = new bool[n];
+    //Creating The priority queue is for each vertex: a pair of <marginal gain, Edge>
+    std::vector<std::vector<std::pair<VAL_T,WeightEdgeSim> > >pq(n);
 
     //zeroing out cV and cW
     for(NODE_T i =0;i<n;i++)
@@ -42,11 +44,10 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
         cV[i] = 0;
         cW[i] = 0.0;
         exposed[i] =  false;
+        pq[i].reserve(G.IA[i+1] - G.IA[i]);
     }
 
 
-    //Creating The priority queue is for each vertex: a pair of <marginal gain, Edge>
-    std::vector<std::vector<std::pair<VAL_T,WeightEdge> > >pq(n);
 
     //initializing the  adjacency list
     for(NODE_T i=0;i<n;i++)
@@ -61,8 +62,8 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
             {
                 //create a weighted edge for (u,v) and (v,u) and insert it to
                 //corresponding vector. j is the index of the common index of the edge
-                WeightEdge we ={{u,v},w,0,j,0};
-                WeightEdge we1 ={{v,u},w,0,j,0};
+                WeightEdgeSim we ={u,v,w};
+                WeightEdgeSim we1 ={v,u,w};
                 pq[u].push_back(std::make_pair(2*pow(w,alpha),we));
                 pq[v].push_back(std::make_pair(2*pow(w,alpha),we1));
 
@@ -123,8 +124,8 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
                     
 
                     //The edge (u,v) with weight w
-                    NODE_T u = top.e.u;
-                    NODE_T v = top.e.v;
+                    NODE_T u = top.u;
+                    NODE_T v = top.v;
                     VAL_T w = top.weight;
                     
                     //if the other end-points of (u,v) i.e., v is saturated or the queue of v is empty then continue for
@@ -158,7 +159,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
 
             } 
         }
-        cout<<"Iteration: "<<itn<<endl;
+        //cout<<"Iteration: "<<itn<<endl;
         //PHASE 2: Matching Phase
         //--------------------------
         //This phase is for matching the appropriate edge.
@@ -168,33 +169,33 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
             if(pq[i].empty() == false && cV[i]<b)
             {
                 //query the top edge of (u)
-                WeightEdge top = pq[i].front().second;
+                WeightEdgeSim top = pq[i].front().second;
                 //marginal gain of top(u)
                 VAL_T margu = pq[i].front().first;
                 NODE_T u = i;
-                NODE_T v = top.e.v;
+                NODE_T v = top.v;
                 
                 //whether the other end-point is saturated
                 if(cV[v]<b)
                 {
                     //the top edge of the other end point (v)
-                    WeightEdge topV = pq[v].front().second;
+                    WeightEdgeSim topV = pq[v].front().second;
                     //marginal gain of the top(v)
                     VAL_T margv = pq[v].front().first;
                     //Whether one of u or v already matched in this iteration
                     //otherwise whether u and v both point to each other
                     //or both of the top's marginal gain is equivalent
-                    if(exposed[u] == false && exposed[v] == false && (topV.e.v == u || abs(margu-margv) <= EPS))
+                    if(exposed[u] == false && exposed[v] == false && (topV.v == u || abs(margu-margv) <= EPS))
                     {
                         //if they don't point to each other but the two top's marginal gain are equal we need to swap 
                         //the necessary edge to v's top. We will loop through v's heap and find out u and make it a top. 
                         //Note that We will always find such edge. Since v is u's top and v's top marginal gain is equal to u's top
                         //marginal gain
-                        if(topV.e.v != u)
+                        if(topV.v != u)
                         {
                             for(size_t k =0;k<pq[v].size();k++)
                             {
-                                if(pq[v][k].second.e.v == u)
+                                if(pq[v][k].second.v == u)
                                 {
                                     auto tmp = pq[v][k].second;
                                     pq[v][k].second = pq[v][0].second;
@@ -208,7 +209,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
                         cV[v]++; 
 
                         //add the edge into the matching
-                        matching.push_back(top);
+                        //matching.push_back(top);
 
                         //The terminate is set to false because we have added edge in this iteration
                         terminate = false;
@@ -230,7 +231,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
                 } 
             } 
         } 
-        cout<<"Iteration: "<<itn<<" "<< matchingSize<<endl;
+        //cout<<"Iteration: "<<itn<<" "<< matchingSize<<endl;
         //increment iteration counter
         itn++;
     } 

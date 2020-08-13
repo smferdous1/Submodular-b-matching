@@ -6,11 +6,11 @@
 //defining types. 
 //
 //Change this to float/double if the weight of the graph is real  
-typedef double VAL_T;
+typedef float VAL_T;
 //Change this to long if number of nodes does not fit into integer
-typedef long long NODE_T;
+typedef  long NODE_T;
 //Change this to long if number of edges does not fit into integer
-typedef long long EDGE_T;
+typedef  long EDGE_T;
 typedef double SUM_T;
 
 struct Edge

@@ -27,7 +27,7 @@ add_library(ra
 #    target_link_libraries(ra PUBLIC OpenMP::OpenMP_CXX)
 #endif()
 
-target_link_libraries(ra PUBLIC -qopenmp)
+target_link_libraries(ra PUBLIC -fopenmp)
 #link light_graph
 #target_link_libraries(ra PRIVATE
 # ${MKL_LIB_LINK}
@@ -41,6 +41,6 @@ target_include_directories(ra PUBLIC
 
 # All users of this library will need at least C++11
 target_compile_features(ra PUBLIC cxx_std_11)
-target_compile_options(ra PRIVATE -O2 -qopenmp)
+target_compile_options(ra PRIVATE -O2 -fopenmp)
 
 

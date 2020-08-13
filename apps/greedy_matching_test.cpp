@@ -52,7 +52,7 @@ int main(int argc,char *argv[])
     totalTime = totalTime + endTime-startTime;
   }
   
-  cout << std::fixed<<std::setprecision(3)<<totalWeight<< " "<<matchingSize<<" ";
+  cout << n<<"<"<<m<<","<<std::fixed<<std::setprecision(3)<<totalWeight<< ","<<matchingSize<<",";
 
   cout<<std::setprecision(4)<<totalTime/nRun<<endl;
 

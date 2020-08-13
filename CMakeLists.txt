@@ -8,7 +8,7 @@ project(ResourceAllocation VERSION 1.0
     )
 
 
-set(CMAKE_CXX_COMPILER "icpc")
+set(CMAKE_CXX_COMPILER "g++")
 
 # The executable code is here
 add_subdirectory(apps)
