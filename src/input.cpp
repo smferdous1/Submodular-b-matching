@@ -115,12 +115,14 @@ void Input::readMtx(std::string fileName, LightGraph &G,int is_random,long seed,
         fileread >> v >> u >> weight;
         v--;
         u--;
-        if(u<v && weight>0)
+        if(u<v)
         {
             if(is_random==1)
             {
                 weight =  minW + ((maxW-minW)*((VAL_T)rand()/(RAND_MAX)));
             }
+            if(weight < 0)
+                weight = (-1)*weight;
             //std::cout<<weight<<std::endl;
             adjList[u].push_back(v);
             adjWeight[u].push_back(weight);
@@ -192,7 +194,7 @@ void Input::writeMtx(std::string fileName, LightGraph &G)
 
     if(myfile.is_open())
     {
-        //myfile << "%This is a mtx file"<<std::endl; 
+        myfile << "%%MatrixMarket matrix coordinate real symmetric"<<std::endl; 
         myfile << G.numberOfNodes()<<" "<<G.numberOfNodes()<<" "<<G.numberOfEdges()<<std::endl;
 
         for(NODE_T i=0;i<G.numberOfNodes();i++)
