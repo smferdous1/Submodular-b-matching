@@ -16,7 +16,7 @@ add_library(ra
     submodularGreedyMatching.cpp
     submodularGreedybMatching.cpp
     localLazyGreed.cpp
-    shmLocalLazyGreed.cpp
+    shmLocalLazyGreedy.cpp
     cluster.cpp
     input.cpp
     utility.cpp

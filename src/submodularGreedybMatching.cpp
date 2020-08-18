@@ -6,6 +6,14 @@ using std::endl;
 
 bool cmpbyFirst(const std::pair<VAL_T,WeightEdgeSim> &T1,const std::pair<VAL_T,WeightEdgeSim> &T2)
 {
+    if(T1.first == T2.first)
+    {
+        if(T1.second.u == T2.second.u)
+           return T1.second.v > T2.second.v; 
+        else if(T1.second.v == T2.second.v)
+            return T1.second.u > T2.second.u;
+    }
+
     return T1.first < T2.first;
 }
 
@@ -82,7 +90,7 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], int b,float alpha, in
 
         if(cV[u]<b && cV[v]<b )
         {
-            if(pq.empty() || topMargGain>=pq.front().first)
+            if(pq.empty() || topMargGain >= pq.front().first)
             {
                 //matching.push_back(top.second);
                 cV[u]++;
@@ -93,30 +101,7 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], int b,float alpha, in
                 cW[u ] += top.second.weight;
                 cW[v ] += top.second.weight;
             }
-            /*else if (topMargGain == pq[0].first)
-            {
-                if(u<pq[0].second.e.u || (u==pq[0].second.e.u && v < pq[0].second.e.v))
-                {
-                    
-                    matching.push_back(top.second);
-                    cV[u]++;
-                    cV[v]++;
-                    matchingSize++;
-                    totalWeight = totalWeight + top.second.weight;
-                    cW[u ] += top.second.weight;
-                    cW[v ] += top.second.weight;
-                     
-                }
-                else
-                {
-                    
-                    top.first = topMargGain;
-                    pq.push_back(top);
-                    std::push_heap(pq.begin(), pq.end(),cmpbyFirst);
-                }
-
-            }*/
-            else if(topMargGain<pq[0].first)
+            else
             {
                 top.first = topMargGain;
                 pq.push_back(top);

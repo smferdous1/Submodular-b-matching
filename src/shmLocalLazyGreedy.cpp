@@ -25,8 +25,9 @@ bool cmpbyFirst(const std::pair<VAL_T,WeightEdgeSim> &T1,const std::pair<VAL_T,W
 //This function takes a graph and run the locally lazy greedy algorithm for maximizing a submodular function subject to 
 //b-matching constraints. The submodular function is of the form (\sum(W_{i,j})^\alpha; a class of concave polynomial
 //This algorithm is equivalent to the classic lazy greedy and thus provides 1/3 approximation guarantee
-void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartition, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize,int maximum)
+void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartition, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize,int maximum, int nt)
 {
+    omp_set_num_threads(nt);
 
     //get the number of nodes and edges in the graph
     NODE_T n = G.numberOfNodes();
@@ -35,22 +36,27 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
     //This vector is for cumulative weights for each vertex
     //would be useful for calculating marginal gain
     std::vector<VAL_T> cW(n);
+    //A lock array defined on each vertex
+    omp_lock_t vlock[n];
     //to track the matched vertices in some iteration
     bool *exposed = new bool[n];
     //Creating The priority queue is for each vertex: a pair of <marginal gain, Edge>
     std::vector<std::vector<std::pair<VAL_T,WeightEdgeSim> > >pq(n);
 
     //zeroing out cV and cW
+    #pragma omp parallel for schedule(static,512)
     for(NODE_T i =0;i<n;i++)
     {
         cV[i] = 0;
         cW[i] = 0.0;
         exposed[i] =  false;
         pq[i].reserve(G.IA[i+1] - G.IA[i]);
+        omp_init_lock(&vlock[i]);
     }
 
 
     //initializing the  adjacency list
+    #pragma omp parallel for schedule(static,512)
     for(NODE_T i=0;i<n;i++)
     {
         for(EDGE_T j=G.IA[i];j<G.IA[i+1];j++)
@@ -65,14 +71,19 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
                 //corresponding vector. j is the index of the common index of the edge
                 WeightEdgeSim we ={u,v,w};
                 WeightEdgeSim we1 ={v,u,w};
+                omp_set_lock(&vlock[u]);
                 pq[u].push_back(std::make_pair(2*pow(w,alpha),we));
+                omp_unset_lock(&vlock[u]);
+                omp_set_lock(&vlock[v]);
                 pq[v].push_back(std::make_pair(2*pow(w,alpha),we1));
+                omp_unset_lock(&vlock[v]);
 
             }
         }
 
     }
     //once the neighbor list is done create a heap by make_heap. 
+    #pragma omp for schedule(static,512)
     for(NODE_T i=0;i<n;i++)
     {
         std::make_heap(pq[i].begin(),pq[i].end(),cmpbyFirst);
@@ -99,6 +110,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
         //PHASE1: Suitor Selection
         //-------------------------
         //Each vertex will select its best suitor according to its best marginal gained adjacent vertex.
+        #pragma omp parallel for schedule(static,512)
         for(NODE_T i=0;i<n;i++)
         {
             //If in PHASE 2 of previous iteration, some vertices were exposed i.e., were part of a matching, we
@@ -135,7 +147,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
                     
                     //Calculate the marginal gain of the top edge
                     VAL_T topMargGain = pow(cW[u ]+w,alpha)-pow(cW[u ],alpha) + pow(cW[v ]+w,alpha)-pow(cW[v ],alpha);
-                    
+                   
                     //If after popping out this edge the queue of v is alreay empty or 
                     //the marginal gain of the updated popped top is greater than the marginal gain of 
                     //current top then we know the popped top is actually the current top, so push it back again to be 
@@ -164,8 +176,10 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
         //PHASE 2: Matching Phase
         //--------------------------
         //This phase is for matching the appropriate edge.
+        #pragma omp parallel for reduction(+:matchingSize) reduction(+:totalWeight)
         for(NODE_T i=0;i<n;i++)
         {
+            omp_set_lock(&vlock[i]);
             //whether this vertex is eligible
             if(pq[i].empty() == false && cV[i]<b)
             {
@@ -175,6 +189,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
                 VAL_T margu = pq[i].front().first;
                 NODE_T u = i;
                 NODE_T v = top.v;
+                omp_set_lock(&vlock[v]);
                 
                 //whether the other end-point is saturated
                 if(u<v && cV[v]<b)
@@ -188,49 +203,47 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
                     //or both of the top's marginal gain is equivalent
                     if(exposed[u] == false && exposed[v] == false && (topV.v == u ))
                     {
-                        //if they don't point to each other but the two top's marginal gain are equal we need to swap 
-                        //the necessary edge to v's top. We will loop through v's heap and find out u and make it a top. 
-                        //Note that We will always find such edge. Since v is u's top and v's top marginal gain is equal to u's top
-                        //marginal gain
-                        /*if(topV.v != u)
-                        {
-                            for(size_t k =0;k<pq[v].size();k++)
-                            {
-                                if(pq[v][k].second.v == u)
-                                {
-                                    auto tmp = pq[v][k].second;
-                                    pq[v][k].second = pq[v][0].second;
-                                    pq[v][0].second = tmp;
-                                    break;
-                                }
-                            }
-                        }*/
                         //increment saturation counter of u and v
-                        cV[u]++;
                         cV[v]++; 
+                        cW[v] += top.weight;
+                        exposed[v] = true;
 
                         //add the edge into the matching
                         //matching.push_back(top);
 
-                        //The terminate is set to false because we have added edge in this iteration
-                        terminate = false;
-
-                        //increment the matching size
-                        matchingSize++;
+                        omp_unset_lock(&vlock[v]);
 
                         //The exposed variable is set to true as u and v are part of matching in this 
                         //iteration
+                        cV[u]++;
                         exposed[u] = true;
-                        exposed[v] = true;
+                        cW[u] += top.weight;
+                        omp_unset_lock(&vlock[u]);
 
                         //you have to add the marginal gain not the actual weight
                         totalWeight = totalWeight + pq[i].front().first;
-                        //for marginal gain calucation purpose
-                        cW[u] += top.weight;
-                        cW[v] += top.weight;
+                        //increment the matching size
+                        matchingSize++;
+                        //The terminate is set to false because we have added edge in this iteration
+                        terminate = false;
+                    }
+                    else
+                    {
+                        omp_unset_lock(&vlock[u]); 
+                        omp_unset_lock(&vlock[v]); 
                     }
                 } 
+                else
+                {
+                    omp_unset_lock(&vlock[u]); 
+                    omp_unset_lock(&vlock[v]); 
+                }
             } 
+            else
+            {
+                omp_unset_lock(&vlock[i]); 
+            }
+
         } 
         //cout<<"Iteration: "<<itn<<" "<< matchingSize<<endl;
         //increment iteration counter
