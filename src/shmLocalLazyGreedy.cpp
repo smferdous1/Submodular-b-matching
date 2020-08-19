@@ -1,6 +1,8 @@
 //Author: S M Ferdous
 //CS@Purdue
 //August 2020
+//TODO: There could be a deadlock. Find it.
+//It happende several times with mouse_gene dataset and 10 therads.
 
 #include "matching.h"
 #include <iostream>
@@ -10,7 +12,8 @@
 //if a and b are two real numbers comparison between them 
 //is unstable so a == b may not provide the desired output
 //hences EPS is declared
-#define EPS 1e-10 
+//#define EPS 1e-10 
+#define EPS 0 
 
 //declaring  this most used namespace entity
 using std::cout;
@@ -117,7 +120,6 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
             //need to pop the top edge, since this edge is already part of matching and should be deleted
             if(exposed[i] == true)
             {
-
                 std::pop_heap(pq[i].begin(),pq[i].end(),cmpbyFirst);
                 pq[i].pop_back();
             }
@@ -143,16 +145,24 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
                     
                     //if the other end-points of (u,v) i.e., v is saturated or the queue of v is empty then continue for
                     //the next vertex
-                    if(pq[v].empty()==true || cV[v]>=b ) continue;
+                    //This is problematic. pq[v] is changing by some other thread. Consider changing it.
+                    //if(pq[v].empty()==true || cV[v]>=b ) continue;
+                    if(cV[v]>=b ) continue;
                     
                     //Calculate the marginal gain of the top edge
-                    VAL_T topMargGain = pow(cW[u ]+w,alpha)-pow(cW[u ],alpha) + pow(cW[v ]+w,alpha)-pow(cW[v ],alpha);
+                    VAL_T topMargGain = pow(cW[u]+w,alpha)-pow(cW[u],alpha) + pow(cW[v]+w,alpha)-pow(cW[v],alpha);
                    
                     //If after popping out this edge the queue of v is alreay empty or 
                     //the marginal gain of the updated popped top is greater than the marginal gain of 
                     //current top then we know the popped top is actually the current top, so push it back again to be 
                     //the top 
-                    if(pq[u].empty() || topMargGain >= pq[u].front().first)
+                    bool flag = false;
+                    
+                    /*if(itn>65)
+                    {
+                        cout << topMargGain<<" "<<pq[u].front().first<<endl;
+                    }*/
+                    if(pq[u].empty() || (topMargGain - pq[u].front().first) >= EPS)
                     {
                         pq[u].push_back(std::make_pair(topMargGain,top));
                         std::push_heap(pq[u].begin(),pq[u].end(),cmpbyFirst);
@@ -169,14 +179,13 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
                     }
                 }
 
-
             } 
         }
         //cout<<"Iteration: "<<itn<<endl;
         //PHASE 2: Matching Phase
         //--------------------------
         //This phase is for matching the appropriate edge.
-        #pragma omp parallel for reduction(+:matchingSize) reduction(+:totalWeight)
+        #pragma omp parallel for schedule(static,512) reduction(+:matchingSize) reduction(+:totalWeight)
         for(NODE_T i=0;i<n;i++)
         {
             omp_set_lock(&vlock[i]);
@@ -189,54 +198,63 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
                 VAL_T margu = pq[i].front().first;
                 NODE_T u = i;
                 NODE_T v = top.v;
-                omp_set_lock(&vlock[v]);
                 
                 //whether the other end-point is saturated
                 if(u<v && cV[v]<b)
                 {
-                    //the top edge of the other end point (v)
-                    WeightEdgeSim topV = pq[v].front().second;
-                    //marginal gain of the top(v)
-                    VAL_T margv = pq[v].front().first;
-                    //Whether one of u or v already matched in this iteration
-                    //otherwise whether u and v both point to each other
-                    //or both of the top's marginal gain is equivalent
-                    if(exposed[u] == false && exposed[v] == false && (topV.v == u ))
+                    omp_set_lock(&vlock[v]);
+
+                    if(cV[v]<b)
                     {
-                        //increment saturation counter of u and v
-                        cV[v]++; 
-                        cW[v] += top.weight;
-                        exposed[v] = true;
+                        //the top edge of the other end point (v)
+                        WeightEdgeSim topV = pq[v].front().second;
+                        //marginal gain of the top(v)
+                        VAL_T margv = pq[v].front().first;
+                        //Whether one of u or v already matched in this iteration
+                        //otherwise whether u and v both point to each other
+                        //or both of the top's marginal gain is equivalent
+                        if(exposed[u] == false && exposed[v] == false && (topV.v == u ))
+                        {
+                            //increment saturation counter of u and v
+                            cV[v]++; 
+                            cW[v] += top.weight;
+                            exposed[v] = true;
 
-                        //add the edge into the matching
-                        //matching.push_back(top);
+                            //add the edge into the matching
+                            //matching.push_back(top);
+                            //The terminate is set to false because we have added edge in this iteration
+                            if(terminate == true) terminate = false;
 
-                        omp_unset_lock(&vlock[v]);
+                            omp_unset_lock(&vlock[v]);
 
-                        //The exposed variable is set to true as u and v are part of matching in this 
-                        //iteration
-                        cV[u]++;
-                        exposed[u] = true;
-                        cW[u] += top.weight;
-                        omp_unset_lock(&vlock[u]);
+                            //The exposed variable is set to true as u and v are part of matching in this 
+                            //iteration
+                            cV[u]++;
+                            exposed[u] = true;
+                            cW[u] += top.weight;
+                            omp_unset_lock(&vlock[u]);
 
-                        //you have to add the marginal gain not the actual weight
-                        totalWeight = totalWeight + pq[i].front().first;
-                        //increment the matching size
-                        matchingSize++;
-                        //The terminate is set to false because we have added edge in this iteration
-                        terminate = false;
+                            //you have to add the marginal gain not the actual weight
+                            totalWeight = totalWeight + margu;
+                            //increment the matching size
+                            matchingSize++;
+                        }
+                        else
+                        {
+                            omp_unset_lock(&vlock[v]); 
+                            omp_unset_lock(&vlock[u]); 
+                        }
                     }
                     else
                     {
-                        omp_unset_lock(&vlock[u]); 
+                    
                         omp_unset_lock(&vlock[v]); 
+                        omp_unset_lock(&vlock[u]); 
                     }
                 } 
                 else
                 {
                     omp_unset_lock(&vlock[u]); 
-                    omp_unset_lock(&vlock[v]); 
                 }
             } 
             else
