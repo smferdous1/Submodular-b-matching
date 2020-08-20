@@ -143,10 +143,9 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
                     NODE_T v = top.v;
                     VAL_T w = top.weight;
                     
-                    //if the other end-points of (u,v) i.e., v is saturated or the queue of v is empty then continue for
+                    //if the other end-points of (u,v) i.e., v is saturated then continue for
                     //the next vertex
-                    //This is problematic. pq[v] is changing by some other thread. Consider changing it.
-                    //if(pq[v].empty()==true || cV[v]>=b ) continue;
+                    //We can not test for emptyiness in v's queue. That might create race condition
                     if(cV[v]>=b ) continue;
                     
                     //Calculate the marginal gain of the top edge
