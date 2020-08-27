@@ -46,6 +46,7 @@ int main(int argc,char *argv[])
     NODE_T *cV = new NODE_T[n];
     //weights
     SUM_T totalWeight;
+    SUM_T linWeight;
     NODE_T matchingSize;
 
     //timeer
@@ -60,7 +61,7 @@ int main(int argc,char *argv[])
     {
         //currentTime(startTime);
         startTime = omp_get_wtime();
-        shmLocalLazyGreedy(G,cV,b,alpha,nPartition,outPut,totalWeight,matchingSize,mainTime,1,nt); 
+        shmLocalLazyGreedy(G,cV,b,alpha,nPartition,outPut,totalWeight,linWeight, matchingSize,mainTime,1,nt); 
         currentTime(endTime);
         endTime = omp_get_wtime();
         totalTime = totalTime + endTime-startTime;
@@ -68,7 +69,7 @@ int main(int argc,char *argv[])
     }
 
     //cout << std::fixed<<std::setprecision(0)<<totalWeight<< " "<<matchingSize<<" "<<b*n/2-matchingSize<<" ";
-    cout  <<nt<<","<<std::fixed<<std::setprecision(5)<<totalWeight<< ","<<matchingSize<<","<<b*n/2-matchingSize<<",";
+    cout  <<nt<<","<<std::fixed<<std::setprecision(5)<<totalWeight<< ","<<linWeight<< ","<<matchingSize<<","<<b*n/2-matchingSize<<",";
 
     cout<< std::setprecision(4)<<2.0*matchingSize/n<<","<<totalTime/nRun<<","<<totalMainTime/nRun<<endl;
 

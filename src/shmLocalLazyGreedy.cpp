@@ -13,7 +13,7 @@
 //#define EPS 1e-10 
 #define EPS 0 
 #define CHUNK 512
-#define DEBUG 1
+#define DEBUG 0
 
 //declaring  this most used namespace entity
 using std::cout;
@@ -28,7 +28,7 @@ bool cmpbyFirst(const std::pair<VAL_T,WeightEdgeSim> &T1,const std::pair<VAL_T,W
 //This function takes a graph and run the locally lazy greedy algorithm for maximizing a submodular function subject to 
 //b-matching constraints. The submodular function is of the form (\sum(W_{i,j})^\alpha; a class of concave polynomial
 //This algorithm is equivalent to the classic lazy greedy and thus provides 1/3 approximation guarantee
-void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartition, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize, double &mainTime, int maximum, int nt)
+void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartition, WeightEdgeList &matching, SUM_T &totalWeight, SUM_T &linWeight, NODE_T &matchingSize, double &mainTime, int maximum, int nt)
 {
     omp_set_num_threads(nt);
 
@@ -39,23 +39,36 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
     //This vector is for cumulative weights for each vertex
     //would be useful for calculating marginal gain
     std::vector<VAL_T> cW(n);
-    //A lock array defined on each vertex
+    //A lock array defined on each vertex; assigned on stack
     omp_lock_t vlock[n];
-    //to track the matched vertices in some iteration
-    bool *exposed = new bool[n];
-    //Creating The priority queue is for each vertex: a pair of <marginal gain, Edge>
+    //to track the matched vertices in some iteration; assigned on stack
+    bool exposed[n];
+    //Creating The priority queue is for each vertex: a pair of <marginal gain, Edge>; 
     std::vector<std::vector<std::pair<VAL_T,WeightEdgeSim> > >pq(n);
     
     double t_zero = omp_get_wtime();
     //zeroing out cV and cW
-    #pragma omp parallel for schedule(static,CHUNK)
-    for(NODE_T i =0;i<n;i++)
+    #pragma omp parallel 
     {
-        cV[i] = 0;
-        cW[i] = 0.0;
-        exposed[i] =  false;
-        pq[i].reserve(G.IA[i+1] - G.IA[i]);
-        omp_init_lock(&vlock[i]);
+        #pragma omp for schedule(static,CHUNK) nowait
+        for(NODE_T i =0;i<n;i++)
+        {
+            cV[i] = 0;
+            cW[i] = 0.0;
+        }
+        #pragma omp for  schedule(static,CHUNK) nowait
+        for(NODE_T i=0;i<n;i++)
+        {
+            exposed[i] =  false;
+            omp_init_lock(&vlock[i]);
+        }
+
+
+    }
+    //This loop does not parallelize at all so do it in serial
+    for(NODE_T i=0;i<n;i++)
+    {
+        pq[i].reserve(2*(G.IA[i+1] - G.IA[i]));
     }
     if(DEBUG==1)
         cout<<"Time for zeroing "<<omp_get_wtime()-t_zero<<endl;
@@ -111,6 +124,7 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
     //initialize matchingsize and matching weight variable
     matchingSize = 0;
     totalWeight  = 0.0;
+    linWeight = 0.0;
     
     double t_main = omp_get_wtime();
     //check stopping condition 
@@ -197,7 +211,7 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
             //PHASE 2: Matching Phase
             //--------------------------
             //This phase is for matching the appropriate edge.
-            #pragma omp for schedule(static,CHUNK) reduction(+:matchingSize) reduction(+:totalWeight)
+            #pragma omp for schedule(static,CHUNK) reduction(+:matchingSize) reduction(+:totalWeight) reduction(+:linWeight)
             for(NODE_T i=0;i<n;i++)
             {
                 omp_set_lock(&vlock[i]);
@@ -248,6 +262,7 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
 
                                 //you have to add the marginal gain not the actual weight
                                 totalWeight = totalWeight + margu;
+                                linWeight = linWeight + top.weight;
                                 //increment the matching size
                                 matchingSize++;
                             }
@@ -281,5 +296,12 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
         itn++;
     } 
     
-    mainTime = omp_get_wtime() -t_main;
+    mainTime = omp_get_wtime() -t_init;
+
+    //freeing the reserved priority queue
+    for(NODE_T i=0;i<n;i++)
+    {
+        pq[i].resize(0);
+        pq[i].shrink_to_fit();
+    }
 }
