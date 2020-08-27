@@ -3,9 +3,9 @@
 #SBATCH -A csit
 #SBATCH --nodes=1 
 #SBATCH --ntasks=20
-#SBATCH --time=60:30:00
+#SBATCH --time=20:30:00
 #SBATCH --mem=50G
-#SBATCH --job-name llg
+#SBATCH --job-name quality
 
 PHOME="/home/sferdou/ResourceAllocation"
 FD="/scratch/snyder/s/sferdou/SubmodData"
@@ -29,11 +29,10 @@ eu-2015.mtx
 nlpkkt240.mtx
 )
 b=5
-nrun=5
-alpha=0.5
-
+nrun=1
+nt=18
 for d in "${files[@]}" ; do
-    for nt in 1 2 4 6 8 10 12 14 16 18 ; do
+    for alpha in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.8 1.0 ; do
         file="$FD/$d"
         #printf "$file"
         export OMP_PLACES=cores
