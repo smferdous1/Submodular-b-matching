@@ -13,7 +13,7 @@
 //#define EPS 1e-10 
 #define EPS 0 
 #define CHUNK 512
-#define DEBUG 0
+#define DEBUG 1
 
 //declaring  this most used namespace entity
 using std::cout;
@@ -48,7 +48,7 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
     
     double t_zero = omp_get_wtime();
     //zeroing out cV and cW
-    #pragma omp parallel for //schedule(static,CHUNK)
+    #pragma omp parallel for schedule(static,CHUNK)
     for(NODE_T i =0;i<n;i++)
     {
         cV[i] = 0;
@@ -62,7 +62,7 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
 
     double t_init = omp_get_wtime();
     //initializing the  adjacency list
-#pragma omp parallel for //schedule(static,CHUNK)
+#pragma omp parallel for schedule(static,CHUNK)
     for(NODE_T i=0;i<n;i++)
     {
         for(EDGE_T j=G.IA[i];j<G.IA[i+1];j++)
@@ -93,7 +93,7 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
 
     double t_heap = omp_get_wtime();
     //once the neighbor list is done create a heap by make_heap. 
-#pragma omp for //schedule(static,CHUNK)
+    #pragma omp parallel for schedule(static,CHUNK)
     for(NODE_T i=0;i<n;i++)
     {
         std::make_heap(pq[i].begin(),pq[i].end(),cmpbyFirst);
