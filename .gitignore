@@ -2,3 +2,5 @@ dataset
 build
 *temp*
 *.swp
+*.swo
+*.out

@@ -4,13 +4,12 @@
 #SBATCH --nodes=1 
 #SBATCH --ntasks=20
 #SBATCH --time=50:30:00
-#SBATCH --mem=40G
+#SBATCH --mem=50G
 #SBATCH --job-name llg
 
 PHOME="/home/sferdou/ResourceAllocation"
 FD="/scratch/snyder/s/sferdou/SubmodData"
 cd $PHOME/build
-
 
 make 
 cp apps/shmllg $PHOME/job_submission
@@ -27,6 +26,7 @@ hollywood-2011.mtx
 G500_21.mtx
 SSA21.mtx
 eu-2015.mtx
+nlpkkt240.mtx
 )
 b=5
 nrun=1

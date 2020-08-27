@@ -50,24 +50,27 @@ int main(int argc,char *argv[])
 
     //timeer
     double startTime,endTime;
-
+    double mainTime;
 
     double totalTime = 0;
+    double totalMainTime = 0;
     int nPartition = 1;
+
     for(int i=0;i<nRun;i++)
     {
         //currentTime(startTime);
         startTime = omp_get_wtime();
-        shmLocalLazyGreedy(G,cV,b,alpha,nPartition,outPut,totalWeight,matchingSize,1,nt); 
+        shmLocalLazyGreedy(G,cV,b,alpha,nPartition,outPut,totalWeight,matchingSize,mainTime,1,nt); 
         currentTime(endTime);
         endTime = omp_get_wtime();
         totalTime = totalTime + endTime-startTime;
+        totalMainTime = totalMainTime + mainTime;
     }
 
     //cout << std::fixed<<std::setprecision(0)<<totalWeight<< " "<<matchingSize<<" "<<b*n/2-matchingSize<<" ";
     cout  <<nt<<","<<std::fixed<<std::setprecision(5)<<totalWeight<< ","<<matchingSize<<","<<b*n/2-matchingSize<<",";
 
-    cout<< std::setprecision(4)<<2.0*matchingSize/n<<","<<totalTime/nRun<<endl;
+    cout<< std::setprecision(4)<<2.0*matchingSize/n<<","<<totalTime/nRun<<","<<totalMainTime/nRun<<endl;
 
     return 0;
 }
