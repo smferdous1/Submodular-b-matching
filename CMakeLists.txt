@@ -7,8 +7,9 @@ project(ResourceAllocation VERSION 1.0
         LANGUAGES  CXX
     )
 
-
-set(CMAKE_CXX_COMPILER "g++")
+if(NOT CMAKE_CXX_COMPILER)
+    set(CMAKE_CXX_COMPILER "g++")
+endif()
 
 # The executable code is here
 add_subdirectory(apps)

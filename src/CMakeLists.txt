@@ -22,12 +22,12 @@ add_library(ra
     utility.cpp
     ${HEADER_LIST}
     )
-#find_package(OpenMP)
-#if(OpenMP_CXX_FOUND)
-#    target_link_libraries(ra PUBLIC OpenMP::OpenMP_CXX)
-#endif()
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(ra PUBLIC OpenMP::OpenMP_CXX)
+endif()
 
-target_link_libraries(ra PUBLIC -fopenmp)
+#target_link_libraries(ra PUBLIC -fopenmp)
 #link light_graph
 #target_link_libraries(ra PRIVATE
 # ${MKL_LIB_LINK}
@@ -41,6 +41,7 @@ target_include_directories(ra PUBLIC
 
 # All users of this library will need at least C++11
 target_compile_features(ra PUBLIC cxx_std_11)
-target_compile_options(ra PRIVATE -O2 -fopenmp)
+#target_compile_options(ra PRIVATE -O2 -fopenmp)
+target_compile_options(ra PRIVATE -O2)
 
 
