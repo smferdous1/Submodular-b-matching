@@ -68,7 +68,7 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
     //This loop does not parallelize at all so do it in serial
     for(NODE_T i=0;i<n;i++)
     {
-        pq[i].reserve(2*(G.IA[i+1] - G.IA[i]));
+        pq[i].reserve((G.IA[i+1] - G.IA[i]));
     }
     if(DEBUG==1)
         cout<<"Time for zeroing "<<omp_get_wtime()-t_zero<<endl;
