@@ -4,7 +4,7 @@
 #SBATCH --nodes=1 
 #SBATCH --ntasks=20
 #SBATCH --time=60:30:00
-#SBATCH --mem=50G
+#SBATCH --mem=100G
 #SBATCH --job-name llg
 
 PHOME="/home/sferdou/ResourceAllocation"
@@ -29,7 +29,7 @@ eu-2015.mtx
 nlpkkt240.mtx
 )
 b=5
-nrun=5
+nrun=3
 alpha=0.5
 
 for d in "${files[@]}" ; do
