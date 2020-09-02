@@ -25,7 +25,7 @@ bool cmpbyFirst(const std::pair<VAL_T,WeightEdgeSim> &T1,const std::pair<VAL_T,W
 //This function takes a graph and run the locally lazy greedy algorithm for maximizing a submodular function subject to 
 //b-matching constraints. The submodular function is of the form (\sum(W_{i,j})^\alpha; a class of concave polynomial
 //This algorithm is equivalent to the classic lazy greedy and thus provides 1/3 approximation guarantee
-void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartition, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize,int maximum)
+void localLazyGreedy(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, int nPartition, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize,int maximum)
 {
 
     //get the number of nodes and edges in the graph
@@ -112,7 +112,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
             //resetting the exposed variable for the vertex
             exposed[i] = false;
             //check whether the vertex i is already saturated or not
-            if(cV[i]<b)
+            if(cV[i]<bV[i])
             {
                 //check whether the queue is already empty in that case we could not
                 //add any edges incident of the vertex i
@@ -131,7 +131,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
                     
                     //if the other end-points of (u,v) i.e., v is saturated or the queue of v is empty then continue for
                     //the next vertex
-                    if(pq[v].empty()==true || cV[v]>=b ) continue;
+                    if(pq[v].empty()==true || cV[v]>=bV[i] ) continue;
                     
                     //Calculate the marginal gain of the top edge
                     VAL_T topMargGain = pow(cW[u ]+w,alpha)-pow(cW[u ],alpha) + pow(cW[v ]+w,alpha)-pow(cW[v ],alpha);
@@ -167,7 +167,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
         for(NODE_T i=0;i<n;i++)
         {
             //whether this vertex is eligible
-            if(pq[i].empty() == false && cV[i]<b)
+            if(pq[i].empty() == false && cV[i]<bV[i])
             {
                 //query the top edge of (u)
                 WeightEdgeSim top = pq[i].front().second;
@@ -177,7 +177,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartiti
                 NODE_T v = top.v;
                 
                 //whether the other end-point is saturated
-                if(u<v && cV[v]<b)
+                if(u<v && cV[v]<bV[v])
                 {
                     //the top edge of the other end point (v)
                     WeightEdgeSim topV = pq[v].front().second;

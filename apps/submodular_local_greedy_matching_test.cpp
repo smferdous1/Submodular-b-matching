@@ -43,6 +43,9 @@ int main(int argc,char *argv[])
 
     WeightEdgeList outPut;
     NODE_T *cV = new NODE_T[n];
+    NODE_T *bV = new NODE_T[n];
+    for(NODE_T i=0;i<n;i++)
+        bV[i] = b;
     //weights
     SUM_T totalWeight;
     NODE_T matchingSize;
@@ -56,7 +59,7 @@ int main(int argc,char *argv[])
     for(int i=0;i<nRun;i++)
     {
         currentTime(startTime);
-        localLazyGreedy(G,cV,b,alpha,nPartition,outPut,totalWeight,matchingSize); 
+        localLazyGreedy(G,cV,bV,alpha,nPartition,outPut,totalWeight,matchingSize); 
         currentTime(endTime);
         totalTime = totalTime + endTime-startTime;
     }
