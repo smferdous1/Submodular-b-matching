@@ -25,7 +25,7 @@ int main(int argc,char *argv[])
 
 
     LightGraph G;
-    graphInput.readMtx(fileName,G,1,5245213,1,5);
+    graphInput.readMtx(fileName,G,0,1,5245213,1,5);
 
     NODE_T n;
     EDGE_T m;

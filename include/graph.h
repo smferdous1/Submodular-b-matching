@@ -73,6 +73,9 @@ class LightGraph
   
   //number of nodes in the graph
   NODE_T n; 
+  //number of row nodes if the graph is bpt but read as non-bpt
+  NODE_T nRow;
+  NODE_T nCol;
   //number of edges in the graph
   EDGE_T m;
   
@@ -136,6 +139,22 @@ class LightGraph
     return n;
   }
   
+  void setNumberNodesRow(NODE_T n1)
+  {
+    nRow = n1;
+  }
+  NODE_T numberOfNodesRow()
+  {
+    return nRow;
+  }
+  void setNumberNodesCol(NODE_T n1)
+  {
+    nCol = n1;
+  }
+  NODE_T numberOfNodesCol()
+  {
+    return nCol;
+  }
   //void createEdgeList(EdgeList &);
   //this create edgelist and if bool=1 it also create the G.RA array
   void createEdgeList(WeightEdgeList &,bool=0);

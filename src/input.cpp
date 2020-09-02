@@ -15,11 +15,11 @@ bool static fileTypeCheck(std::string fn, std::string extension)
     }
 }
 
-void Input::readGraphGen(std::string fileName, LightGraph &G,int is_random,long seed, VAL_T minW, VAL_T maxW)
+void Input::readGraphGen(std::string fileName, LightGraph &G,int add, int is_random,long seed, VAL_T minW, VAL_T maxW)
 {
     if(fileTypeCheck(fileName,"mtx")==true)
     {
-        readMtx(fileName,G,is_random,seed,minW,maxW);
+        readMtx(fileName,G,add,is_random,seed,minW,maxW);
     }
     else if(fileTypeCheck(fileName,"bin") == true)
     {
@@ -79,7 +79,7 @@ void Input::wrtGraphBpt(std::string fileName, BptGraph &G)
     }
 }
 //read symmetric graph
-void Input::readMtx(std::string fileName, LightGraph &G,int is_random,long seed, VAL_T minW, VAL_T maxW)
+void Input::readMtx(std::string fileName, LightGraph &G,int add, int is_random,long seed, VAL_T minW, VAL_T maxW)
 {
     //std::cout<<"start to read"<<std::endl;
     srand(seed);
@@ -100,11 +100,16 @@ void Input::readMtx(std::string fileName, LightGraph &G,int is_random,long seed,
     NODE_T nrow,ncol;
     EDGE_T nnz;
     fileread >> nrow >> ncol >> nnz;
+    NODE_T n;
+    if(add == 1)
+        n = nrow + ncol;
+    else
+        n = nrow;
 
     std::vector<std::vector<NODE_T> > adjList;
     std::vector<std::vector<VAL_T> > adjWeight;
-    adjList.resize(nrow);
-    adjWeight.resize(nrow);
+    adjList.resize(n);
+    adjWeight.resize(n);
 
     NODE_T u;
     NODE_T v;
@@ -134,16 +139,19 @@ void Input::readMtx(std::string fileName, LightGraph &G,int is_random,long seed,
         }
     }
     G.setNumberEdges(nEdge);
-    G.setNumberNodes(nrow);
+    G.setNumberNodes(n);
+    //would be helpful if the graph is bipartite but read as non-bpt
+    G.setNumberNodesRow(nrow);
+    G.setNumberNodesCol(ncol);
 
     G.A = new VAL_T[2*nEdge+5];
-    G.IA = new NODE_T[nrow+5];
+    G.IA = new NODE_T[n+5];
     G.JA = new NODE_T[2*nEdge];
 
     //second pass. Build the three arrays
     G.IA[0] = 0;
     EDGE_T k=0;
-    for(NODE_T i=0;i<nrow;i++)
+    for(NODE_T i=0;i<n;i++)
     {
         
         for(NODE_T j=0;j<adjList[i].size();j++)
