@@ -46,6 +46,7 @@ int main(int argc,char *argv[])
     //weights
     SUM_T totalWeight;
     NODE_T matchingSize;
+    std::vector<VAL_T> cW(n);
 
     //timeer
     double startTime,endTime;
@@ -56,7 +57,7 @@ int main(int argc,char *argv[])
     for(int i=0;i<nRun;i++)
     {
         currentTime(startTime);
-        submodularGreedybMatching(G,cV,bV,alpha,nPartition,outPut,totalWeight,matchingSize); 
+        submodularGreedybMatching(G,cV,bV,alpha,nPartition,cW,outPut,totalWeight,matchingSize); 
         currentTime(endTime);
         totalTime = totalTime + endTime-startTime;
     }

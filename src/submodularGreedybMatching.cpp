@@ -17,7 +17,7 @@ bool cmpbyFirst(const std::pair<VAL_T,WeightEdgeSim> &T1,const std::pair<VAL_T,W
     return T1.first < T2.first;
 }
 
-void submodularGreedybMatching(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, int nPartition, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize,int maximum)
+void submodularGreedybMatching(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, int nPartition, std::vector<VAL_T> &cW,WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize,int maximum)
 {
 
     NODE_T n = G.numberOfNodes();
@@ -25,7 +25,7 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], NODE_T bV[],float alp
     //std::cout<<n<<" "<<m<<std::endl;
     //zeroing out cV
     //
-    std::vector<VAL_T> cW(n);
+    //std::vector<VAL_T> cW(n);
     for(NODE_T i =0;i<n;i++)
     {
         cV[i] = 0;
@@ -61,6 +61,7 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], NODE_T bV[],float alp
             {
                 //create a weighted edge for (u,v) and (v,u) and insert it to
                 //corresponding vector. j is the index of the common index of the edge
+                //cout<<u<<" "<<v<<" "<<w<<endl;
                 WeightEdgeSim we ={u,v,w};
                 pq.push_back(std::make_pair(2*pow(w,alpha),we));
 
@@ -92,7 +93,11 @@ void submodularGreedybMatching(LightGraph &G, NODE_T cV[], NODE_T bV[],float alp
         {
             if(pq.empty() || topMargGain >= pq.front().first)
             {
-                //matching.push_back(top.second);
+                WeightEdge we;
+                we.e.u = u;
+                we.e.v = v;
+                we.weight = w;
+                matching.push_back(we);
                 cV[u]++;
                 cV[v]++;
                 matchingSize++;

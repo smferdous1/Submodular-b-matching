@@ -15,9 +15,10 @@
 #define CHUNK 512
 #define DEBUG 0
 
-//declaring  this most used namespace entity
+//declaring  the most used namespace entity
 using std::cout;
 using std::endl;
+
 //A comparator function for heap
 bool cmpbyFirst(const std::pair<VAL_T,WeightEdgeSim> &T1,const std::pair<VAL_T,WeightEdgeSim> &T2)
 {
@@ -39,11 +40,12 @@ void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPart
     //This vector is for cumulative weights for each vertex
     //would be useful for calculating marginal gain
     std::vector<VAL_T> cW(n);
+
     //A lock array defined on each vertex; assigned on stack
     omp_lock_t vlock[n];
     //to track the matched vertices in some iteration; assigned on stack
     bool exposed[n];
-    //Creating The priority queue is for each vertex: a pair of <marginal gain, Edge>; 
+    //Creating a priority queue is for each vertex: a pair of <marginal gain, Edge>; 
     std::vector<std::vector<std::pair<VAL_T,WeightEdgeSim> > >pq(n);
     
     double t_zero = omp_get_wtime();

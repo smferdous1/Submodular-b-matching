@@ -25,7 +25,7 @@ bool cmpbyFirst(const std::pair<VAL_T,WeightEdgeSim> &T1,const std::pair<VAL_T,W
 //This function takes a graph and run the locally lazy greedy algorithm for maximizing a submodular function subject to 
 //b-matching constraints. The submodular function is of the form (\sum(W_{i,j})^\alpha; a class of concave polynomial
 //This algorithm is equivalent to the classic lazy greedy and thus provides 1/3 approximation guarantee
-void localLazyGreedy(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, int nPartition, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize,int maximum)
+void localLazyGreedy(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, int nPartition, std::vector<VAL_T> &cW, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize,int maximum)
 {
 
     //get the number of nodes and edges in the graph
@@ -34,7 +34,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, int nP
 
     //This vector is for cumulative weights for each vertex
     //would be useful for calculating marginal gain
-    std::vector<VAL_T> cW(n);
+    //std::vector<VAL_T> cW(n);
     //to track the matched vertices in some iteration
     bool *exposed = new bool[n];
     //Creating The priority queue is for each vertex: a pair of <marginal gain, Edge>
@@ -131,7 +131,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, int nP
                     
                     //if the other end-points of (u,v) i.e., v is saturated or the queue of v is empty then continue for
                     //the next vertex
-                    if(pq[v].empty()==true || cV[v]>=bV[i] ) continue;
+                    if(pq[v].empty()==true || cV[v]>=bV[v] ) continue;
                     
                     //Calculate the marginal gain of the top edge
                     VAL_T topMargGain = pow(cW[u ]+w,alpha)-pow(cW[u ],alpha) + pow(cW[v ]+w,alpha)-pow(cW[v ],alpha);
@@ -232,7 +232,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, int nP
                 } 
             } 
         } 
-        //cout<<"Iteration: "<<itn<<" "<< matchingSize<<endl;
+        cout<<"Iteration: "<<itn<<" "<< matchingSize<<endl;
         //increment iteration counter
         itn++;
     } 
