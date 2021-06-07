@@ -2,6 +2,7 @@
 #define INPUT_H
 #include <string>
 #include "graph.h"
+#include "load.h"
 
 class Input
 {
@@ -21,6 +22,7 @@ class Input
   void readGraphBpt(std::string ,BptGraph& ,int=0, long int=0,VAL_T=0,VAL_T=0);
   void wrtGraphGen(std::string, LightGraph&);
   void wrtGraphBpt(std::string, BptGraph&);
+    void readLoads(std::string , Loads &);
   Input()
   {
   

@@ -4,6 +4,7 @@ set(HEADER_LIST
      "${PROJECT_SOURCE_DIR}/include/matching.h"
      "${PROJECT_SOURCE_DIR}/include/input.h"
      "${PROJECT_SOURCE_DIR}/include/utility.h"
+     "${PROJECT_SOURCE_DIR}/include/load.h"
 
     )
 
@@ -20,6 +21,7 @@ add_library(ra
     cluster.cpp
     input.cpp
     utility.cpp
+    loadBalSimple.cpp
     ${HEADER_LIST}
     )
 find_package(OpenMP)
