@@ -526,3 +526,33 @@ void Input::readMtxBptAsNonBpt(std::string fileName, LightGraph &G,int is_random
   }
 
 }
+
+//read load files
+void Input::readLoads(std::string fileName, Loads &L)
+{
+    std::ifstream fileread(fileName.c_str());
+    
+    if(fileread.is_open()==false)
+    {
+        std::cout << "No file named "<<fileName<<std::endl;
+        std::exit(1);
+    }
+    while (fileread.peek() == '%') fileread.ignore(2048, '\n');
+    
+    EDGE_T nLoads = 0; 
+    
+    NODE_T rank;
+    NODE_T s1;
+    NODE_T s2;
+    VAL_T nTasks;
+    
+    while(fileread>>rank>>s1>>s2>>nTasks)    
+    {
+        if(nTasks > 0)
+        {
+            L.loadList.push_back({rank,s1,s2,nTasks}) ;
+            nLoads++;
+        } 
+    }    
+    L.nLoads = nLoads;
+}
