@@ -19,7 +19,6 @@ void simpleLoadBal(Loads &L, NODE_T nMachine, NODE_T cV[], NODE_T bV[],float alp
             }
     );
     
-    cout<<"sorting completede..."<<endl; 
     //create a pq with nMachine size.
     std::vector< std::pair<VAL_T,NODE_T> > pq;
     for(NODE_T i=0;i<nMachine;i++)
@@ -30,7 +29,6 @@ void simpleLoadBal(Loads &L, NODE_T nMachine, NODE_T cV[], NODE_T bV[],float alp
         cV[i] = 0;
     } 
     std::make_heap(pq.begin(),pq.end(),cmpbyFirst);
-    cout<<"heap creation completed..."<<endl;
     
     //scan over the loadList array in high to low and place it in the least load availalble queue.
     for(EDGE_T i=0;i<L.nLoads;i++)
@@ -56,7 +54,7 @@ void simpleLoadBal(Loads &L, NODE_T nMachine, NODE_T cV[], NODE_T bV[],float alp
                     std::push_heap(pq.begin(),pq.end(),cmpbyFirst);
                     
                 }
-                cout<<"Load "<<i<<": "<<L.loadList[i].nTasks<<" assigned machine "<<mId<<": "<<cW[mId]<<endl;
+                //cout<<"Load "<<i<<": "<<L.loadList[i].nTasks<<" assigned machine "<<mId<<": "<<cW[mId]<<endl;
                 break;
             }
         } 

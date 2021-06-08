@@ -21,13 +21,15 @@ int main(int argc,char *argv[])
     
     std::string fileName = argv[1];
     std::string outfile = argv[2];
-    float alpha = atof(argv[3]);
-    int nMachine = atoi(argv[4]);
+    int nMachine = atoi(argv[3]);
+    float alpha = 0.5;
 
 
     Loads L;
     //do not add
     graphInput.readLoads(fileName,L);
+    
+    
 
     EDGE_T nLoads;
     
