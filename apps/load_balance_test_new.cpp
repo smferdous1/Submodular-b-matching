@@ -37,11 +37,10 @@ int main(int argc,char *argv[])
 
     cout<<nLoads<<" "<<nRow<<" "<<nCol<<endl;
 
-    /*for(EDGE_T i=0;i<2*m;i++)
-      {
-      cout<<G.A[i]<<endl;
-      }*/
-
+    /*for(EDGE_T i=0;i<nLoads;i++)
+    {
+      cout<<L.loadList[i].nTasks<<endl;
+    }*/
 
     NODE_T *cV = new NODE_T[nMachine];
     NODE_T *bV = new NODE_T[nMachine];
@@ -75,23 +74,23 @@ int main(int argc,char *argv[])
     totalTime = totalTime + endTime-startTime;
 
     //open the output file and write down the allocation
-    /*ofstream write_match;
+    ofstream write_match;
     write_match.open(outfile);
-    write_match<<"# of jobs: "<<nRow<<endl;
-    write_match<<"# of machines: "<<nMachine<<endl;
-    write_match<<"#job_id,machine_id,load"<<endl;
-    for(NODE_T i =0;i<outPut.size();i++)
+    write_match<<"%# of jobs: "<<nRow<<endl;
+    write_match<<"%# of machines: "<<nMachine<<endl;
+    write_match<<"%#job_id,machine_id,load"<<endl;
+    for(NODE_T i =0;i<nLoads;i++)
     {
         //job" "machine
-        write_match<<outPut[i].e.u<<","<<outPut[i].e.v-nRow<<","<<outPut[i].weight<<endl;
+        write_match<<L.loadList[i].loadId<<","<<L.loadList[i].rank<<","<<L.loadList[i].nTasks<<endl;
 
-    }*/
-
+    }
+    /*
     for(NODE_T i=0;i<L.nLoads;i++)
     {
-        cout<<L.loadList[i].nTasks<<endl; 
+        cout<<L.loadList[i].rank<<endl; 
     }
-
+    */
     //cout << std::fixed<<std::setprecision(0)<<totalWeight<< " "<<matchingSize<<" "<<b*n/2-matchingSize<<" ";
     //cout<< n <<","<<m<<","<<std::fixed<<std::setprecision(5)<<totalWeight<< ","<<matchingSize<<","<<b*n/2-matchingSize<<",";
 

@@ -528,6 +528,9 @@ void Input::readMtxBptAsNonBpt(std::string fileName, LightGraph &G,int is_random
 }
 
 //read load files
+//Any header content on the load files needs to be started with 
+//% sign. Each line should containt 4 white space seperated values
+//The rank, s1, s2, nTasks.
 void Input::readLoads(std::string fileName, Loads &L)
 {
     std::ifstream fileread(fileName.c_str());
@@ -550,7 +553,7 @@ void Input::readLoads(std::string fileName, Loads &L)
     {
         if(nTasks > 0)
         {
-            L.loadList.push_back({rank,s1,s2,nTasks}) ;
+            L.loadList.push_back({nLoads,rank,s1,s2,nTasks}) ;
             nLoads++;
         } 
     }    

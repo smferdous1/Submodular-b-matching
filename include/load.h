@@ -4,6 +4,7 @@
 
 struct Load
 {
+    NODE_T loadId;
     NODE_T rank;
     NODE_T s1;
     NODE_T s2;

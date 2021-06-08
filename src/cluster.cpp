@@ -16,14 +16,14 @@ bool cmpbyFirst(const std::pair<VAL_T,EDGE_T> &T1,const std::pair<VAL_T,EDGE_T> 
 
 void repeatedGreedyMatchingPhase(NODE_T n,WeightEdgeList &edgeListOrig, WeightEdgeList &edgeList,WeightEdgeList &edgeListNext, int groupId, WeightEdgeList &matching, SUM_T &totalWeight,NODE_T &matchingSize, int doSort)
 {
-  //zeroing out cV
-  NODE_T *cV = new NODE_T[n];
-  for(NODE_T i =0;i<n;i++)
-  {
-    cV[i] = 0;
-  }
+    //zeroing out cV
+    NODE_T *cV = new NODE_T[n];
+    for(NODE_T i =0;i<n;i++)
+    {
+        cV[i] = 0;
+    }
 
-  EDGE_T m = edgeList.size();
+    EDGE_T m = edgeList.size();
 
   vector<std::pair<VAL_T,EDGE_T> > pairedEdges;
   pairedEdges.reserve(m);
