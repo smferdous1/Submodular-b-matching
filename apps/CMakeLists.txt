@@ -41,9 +41,9 @@ target_compile_options(lb PRIVATE -O3 )
 target_link_libraries(lb PRIVATE ra)
 target_include_directories(lb PRIVATE "${PROJECT_SOURCE_DIR}/include")
 
-#executable lb_new
-add_executable(lb_new load_balance_test_new.cpp)
-target_compile_features(lb_new PRIVATE cxx_std_11)
-target_compile_options(lb_new PRIVATE -O3 )
-target_link_libraries(lb_new PRIVATE ra)
-target_include_directories(lb_new PRIVATE "${PROJECT_SOURCE_DIR}/include")
+#executable lb_sim
+add_executable(lb_sim load_balance_test_simple.cpp)
+target_compile_features(lb_sim PRIVATE cxx_std_11)
+target_compile_options(lb_sim PRIVATE -O3 )
+target_link_libraries(lb_sim PRIVATE ra)
+target_include_directories(lb_sim PRIVATE "${PROJECT_SOURCE_DIR}/include")

@@ -12,9 +12,9 @@ using namespace std;
 int main(int argc,char *argv[])
 {
 
-    if(argc != 5)
+    if(argc != 4)
     {
-       cout<< "usage: ./progr_name filename outfile alpha nMachine"<<endl; 
+       cout<< "usage: ./progr_name filename outfile  nMachine"<<endl; 
        exit(1);
     }
     Input graphInput;
