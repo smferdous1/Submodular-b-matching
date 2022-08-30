@@ -218,6 +218,41 @@ void Input::writeMtx(std::string fileName, LightGraph &G)
     else
         std::cout<<"unable to open file"<<std::endl;
 }
+//over-loaded method 
+void Input::writeMtx(std::string fileName, NODE_T n, WeightEdgeList &outPut)
+{
+    if(fileTypeCheck(fileName,"mtx")==false)
+    {
+        std::cout << "file type is not mtx"<<std::endl;
+        std::exit(1);
+    }
+    std::sort(outPut.begin(),outPut.end(),
+            //Lambda expression for comparator
+            [](WeightEdge &a, WeightEdge &b) {
+                if(a.e.u<b.e.u)
+                    return true;
+                else if(a.e.u == b.e.u && a.e.v<b.e.v)
+                    return true;
+                return false;
+                }
+            );
+
+    std::ofstream myfile(fileName.c_str());
+
+    if(myfile.is_open())
+    {
+        myfile << "%%MatrixMarket matrix coordinate real symmetric"<<std::endl; 
+        myfile <<n<<" "<<n<<" "<<outPut.size()<<std::endl;
+
+        for(auto i=0;i<outPut.size();i++)
+        {
+            myfile << outPut[i].e.u+1 << " "<< outPut[i].e.v+1 << " "<<outPut[i].weight<<std::endl;
+        }
+        myfile.close();
+    }
+    else
+        std::cout<<"unable to open file"<<std::endl;
+}
 
 //read non-symmetric graph
 void Input::readMtxBpt(std::string fileName, BptGraph &G,int is_random,long seed, VAL_T minW, VAL_T maxW)

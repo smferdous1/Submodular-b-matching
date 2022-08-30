@@ -10,6 +10,11 @@
 using namespace std;
 int main(int argc,char *argv[])
 {
+    if(argc != 7)
+    {
+        std::cout<<"./program filename b nrun alpha write outfile"<<std::endl;
+        exit(1); 
+    }
 
     Input graphInput;
 
@@ -17,10 +22,12 @@ int main(int argc,char *argv[])
     int b = atoi(argv[2]);
     int nRun = atoi(argv[3]);
     float alpha = atof(argv[4]);
+    int write = atoi(argv[5]);
+    std::string outfile = argv[6];
 
 
     LightGraph G;
-    graphInput.readMtx(fileName,G,0,1,5245213,1,5);
+    graphInput.readMtx(fileName,G);
 
     //cout<<"read successful"<<endl;
     NODE_T n;
@@ -65,6 +72,11 @@ int main(int argc,char *argv[])
     cout<< n <<","<<m<<","<<std::fixed<<std::setprecision(5)<<totalWeight<< ","<<matchingSize<<","<<b*n/2-matchingSize<<",";
 
     cout<< std::setprecision(4)<<2.0*matchingSize/n<<","<<totalTime/nRun<<endl;
+
+    if(write == 1)
+    {
+        graphInput.writeMtx(outfile,n,outPut); 
+    }
 
     return 0;
 }

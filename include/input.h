@@ -14,6 +14,7 @@ class Input
   //default constructor
   
   void writeMtx(std::string, LightGraph &);
+  void writeMtx(std::string, NODE_T, WeightEdgeList &);
   void readBinBpt(std::string , BptGraph &);
   void wrtBinBpt(std::string , BptGraph &);
   void readBinGen(std::string , LightGraph &);
