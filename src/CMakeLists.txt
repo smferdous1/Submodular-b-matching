@@ -18,13 +18,13 @@ add_library(ra
     submodularGreedybMatching.cpp
     localLazyGreed.cpp
     shmLocalLazyGreedy.cpp
-    cluster.cpp
     input.cpp
     utility.cpp
     loadBalSimple.cpp
     ${HEADER_LIST}
     )
 find_package(OpenMP)
+
 if(OpenMP_CXX_FOUND)
     target_link_libraries(ra PUBLIC OpenMP::OpenMP_CXX)
 endif()

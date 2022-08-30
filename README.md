@@ -1,4 +1,4 @@
-# Resource-Allocation
+# Submodular Matching
 To build:
 
 ```
@@ -18,6 +18,5 @@ cmake -DCMAKE_CXX_COMPILER="icpc"
 ```
 would compile everything with intel icpc.
 
-Tested in Snyder and NERRSC Cori Machine
 
 **This project required OpenMP**
