@@ -1,10 +1,28 @@
-#ifndef GRAPH_H
-#define GRAPH_H
+/*
+ * Copyright (C) 2022  Ferdous,S M <ferdous.csebuet@egmail.com>
+ * Author: Ferdous,S M <ferdous.csebuet@egmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#pragma once
 
 #include<vector>
 #include<algorithm>
+
 //defining types. 
-//
 //Change this to float/double if the weight of the graph is real  
 typedef float VAL_T;
 //Change this to long if number of nodes does not fit into integer
@@ -29,6 +47,7 @@ struct WeightEdge
   NODE_T id;
   int groupId;
 };
+
 //weight edge simple
 struct WeightEdgeSim
 {
@@ -42,6 +61,7 @@ struct RefEdge
   WeightEdge we;
   EDGE_T ref;
 };
+
 //adjacent edge
 struct Adj
 {
@@ -60,6 +80,7 @@ struct Adj
     return (this->adjV < adj.adjV); 
   } 
 };
+
 //to hold list of edges.
 typedef std::vector<Edge> EdgeList;
 typedef std::vector<WeightEdge> WeightEdgeList;
@@ -240,8 +261,3 @@ class BptGraph
   void printGraph();
   void sortGraph();
 };
-
-
-
-
-#endif

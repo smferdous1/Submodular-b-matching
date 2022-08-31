@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2022  Ferdous,S M <ferdous.csebuet@egmail.com>
+ * Author: Ferdous,S M <ferdous.csebuet@egmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 #include <iostream>
 #include "graph.h"
 
@@ -30,6 +49,7 @@ void LightGraph::createEdgeList(WeightEdgeList &outList,bool ref)
         }
     }
 }
+
 void LightGraph::createRefArray()
 {
     RA = new EDGE_T[2*m];
@@ -52,6 +72,7 @@ void LightGraph::createRefArray()
     }
 
 }
+
 //overloader methods. In addition to the reference array it computes the inverse reference array. 
 void LightGraph::createRefArray(int invRef)
 {
@@ -80,8 +101,8 @@ void LightGraph::createRefArray(int invRef)
             }
         }
     }
-
 }
+
 void LightGraph::printGraph(NODE_T offset)
 {
     for(NODE_T i=0;i<n;i++)
@@ -92,6 +113,7 @@ void LightGraph::printGraph(NODE_T offset)
         }
     }
 }
+
 void BptGraph::printGraph()
 {
     std::cout<<nA<<" "<<nB<<" "<<m<<std::endl;
@@ -103,6 +125,7 @@ void BptGraph::printGraph()
         }
     }
 }
+
 void LightGraph::printGraph()
 {
     for(NODE_T i=0;i<n;i++)
@@ -161,6 +184,5 @@ void LightGraph::sortGraph()
             count++;
         }
     }
-
 }
 
