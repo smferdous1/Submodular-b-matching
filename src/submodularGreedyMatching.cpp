@@ -26,7 +26,7 @@ bool cmpbyFirst(const std::pair<VAL_T,WeightEdge> &T1,const std::pair<VAL_T,Weig
     return T1.first < T2.first;
 }
 
-void submodularGreedyMatching(LightGraph &G, NODE_T cV[], float alpha, int nPartition, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize,int maximum)
+void submodularGreedyMatching(LightGraph &G, NODE_T cV[], float alpha, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize)
 {
   
   NODE_T n = G.numberOfNodes();

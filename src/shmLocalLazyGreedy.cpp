@@ -44,7 +44,7 @@ bool cmpbyFirst(const std::pair<VAL_T,WeightEdgeSim> &T1,const std::pair<VAL_T,W
 //This function takes a graph and run the locally lazy greedy algorithm for maximizing a submodular function subject to 
 //b-matching constraints. The submodular function is of the form (\sum(W_{i,j})^\alpha; a class of concave polynomial
 //This algorithm is equivalent to the classic lazy greedy and thus provides 1/3 approximation guarantee
-void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, int nPartition, WeightEdgeList &matching, SUM_T &totalWeight, SUM_T &linWeight, NODE_T &matchingSize, double &mainTime, int maximum, int nt)
+void shmLocalLazyGreedy(LightGraph &G, NODE_T cV[], int b,float alpha, WeightEdgeList &matching, SUM_T &totalWeight, SUM_T &linWeight, NODE_T &matchingSize, double &mainTime, int nt)
 {
     omp_set_num_threads(nt);
 

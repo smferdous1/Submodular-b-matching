@@ -73,11 +73,10 @@ int main(int argc,char *argv[])
 
 
     double totalTime = 0;
-    int nPartition = 1;
     for(int i=0;i<nRun;i++)
     {
         currentTime(startTime);
-        localLazyGreedy(G,cV,bV,alpha,nPartition,cW,outPut,totalWeight,matchingSize,1.0); 
+        localLazyGreedy(G,cV,bV,alpha,cW,outPut,totalWeight,matchingSize,1.0); 
         currentTime(endTime);
         totalTime = totalTime + endTime-startTime;
     }

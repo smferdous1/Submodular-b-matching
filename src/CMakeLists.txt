@@ -14,7 +14,7 @@ set(HEADER_LIST
 add_library(ra
     graph.cpp
     greedyMatching.cpp
-    submodularGreedyMatching.cpp
+    #submodularGreedyMatching.cpp
     submodularGreedybMatching.cpp
     localLazyGreed.cpp
     shmLocalLazyGreedy.cpp

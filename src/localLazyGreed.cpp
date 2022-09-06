@@ -30,6 +30,7 @@
 //declaring  this most used namespace entity
 using std::cout;
 using std::endl;
+
 //A comparator function for heap
 bool cmpbyFirst(const std::pair<VAL_T,WeightEdgeSim> &T1,const std::pair<VAL_T,WeightEdgeSim> &T2)
 {
@@ -40,7 +41,7 @@ bool cmpbyFirst(const std::pair<VAL_T,WeightEdgeSim> &T1,const std::pair<VAL_T,W
 //This function takes a graph and run the locally lazy greedy algorithm for maximizing a submodular function subject to 
 //b-matching constraints. The submodular function is of the form (\sum(W_{i,j})^\alpha; a class of concave polynomial
 //This algorithm is equivalent to the classic lazy greedy and thus provides 1/3 approximation guarantee
-void localLazyGreedy(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, int nPartition, std::vector<VAL_T> &cW, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize,int maximum)
+void localLazyGreedy(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, std::vector<VAL_T> &cW, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize)
 {
 
     //get the number of nodes and edges in the graph
@@ -264,7 +265,7 @@ void localLazyGreedy(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, int nP
 //b-matching constraints. The submodular function is of the form (\sum(W_{i,j})^\alpha; a class of concave polynomial
 //This algorithm is equivalent to the classic lazy greedy and thus provides 1/3 approximation guarantee
 //This is the epsilon version
-void localLazyGreedy(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, int nPartition, std::vector<VAL_T> &cW, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize,double epsilon,int maximum)
+void localLazyGreedy(LightGraph &G, NODE_T cV[], NODE_T bV[],float alpha, std::vector<VAL_T> &cW, WeightEdgeList &matching, SUM_T &totalWeight, NODE_T &matchingSize,double epsilon)
 {
 
     //get the number of nodes and edges in the graph

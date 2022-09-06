@@ -41,6 +41,8 @@ make
 ```
 
 ## Usages
-These software base 
-All the executable files in build/apps directory.
-
+This software pacakge implements the serial and parallel local lazy greedy algorithm for maximimizing submodular functions subject to b-matching constraints. A b-matching is a
+subgraph where each vertex has degree at most an integer $b$. We implement here a particular submodular function 
+$$
+Z = \sum_{v \in V} \left(\sum_{e \in \delta(v)}{W(e)x(e)}\right)^\alpha$.
+$$

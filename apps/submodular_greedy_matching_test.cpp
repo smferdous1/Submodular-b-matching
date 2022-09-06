@@ -78,11 +78,10 @@ int main(int argc,char *argv[])
 
 
     double totalTime = 0;
-    int nPartition = 1;
     for(int i=0;i<nRun;i++)
     {
         currentTime(startTime);
-        submodularGreedybMatching(G,cV,bV,alpha,nPartition,cW,outPut,totalWeight,matchingSize); 
+        submodularGreedybMatching(G,cV,bV,alpha,cW,outPut,totalWeight,matchingSize); 
         currentTime(endTime);
         totalTime = totalTime + endTime-startTime;
     }

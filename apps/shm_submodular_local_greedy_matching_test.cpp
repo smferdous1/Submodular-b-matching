@@ -73,13 +73,12 @@ int main(int argc,char *argv[])
 
     double totalTime = 0;
     double totalMainTime = 0;
-    int nPartition = 1;
 
     for(int i=0;i<nRun;i++)
     {
         //currentTime(startTime);
         startTime = omp_get_wtime();
-        shmLocalLazyGreedy(G,cV,b,alpha,nPartition,outPut,totalWeight,linWeight, matchingSize,mainTime,1,nt); 
+        shmLocalLazyGreedy(G,cV,b,alpha,outPut,totalWeight,linWeight, matchingSize,mainTime,nt); 
         currentTime(endTime);
         endTime = omp_get_wtime();
         totalTime = totalTime + endTime-startTime;
