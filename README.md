@@ -42,7 +42,25 @@ make
 
 ## Usages
 This software pacakge implements the serial and parallel local lazy greedy algorithm for maximimizing submodular functions subject to b-matching constraints. A b-matching is a
-subgraph where each vertex has degree at most an integer $b$. We implement here a particular submodular function 
-$$
-Z = \sum_{v \in V} \left(\sum_{e \in \delta(v)}{W(e)x(e)}\right)^\alpha$.
-$$
+subgraph where each vertex has degree at most an integer $b$. We implement here a particular submodular function as follows.
+ 
+>$Z = \sum_{v \in V} \left(\sum_{e \in \delta(v)}{W(e)x(e)}\right)^\alpha.$
+Here $x(e)$ is the characteristic funciton of the matching, i.e., $x(e) = 1$ if the edge, $e$ belongs to the b-matching. $\alpha$ is between 0 to 1 and controls the concavity. If $\alpha = 1$, the function becomes linear.
+
+The "src" directory contains necessary library functions for the lazy greedy, serial and shared memory local lazy greedy and load balancing functions. The "apps" directory contains the test and application files.
+
+### Lazy Greedy
+>src/submodularGreedybMatching.cpp
+
+### Serial Local Lazy Greedy
+>src/localLazyGreed.cpp
+
+### Parallel Local Lazy Greedy
+>src/shmLocalLazyGreedy.cpp
+
+### Application: Load balancing Fock matrix construction
+One application of submodular b-matching is to generate load balancing assignment of blocks of Fock matrices to the multi processors. We provide two implementations of such assignment. In "apps/load_balance_test.cpp" files, we use the default lazy greedy to generate the assignments. Since the input graph here is a complete graph, this implementation is slow. Hence, we provide a direct implementation of the load balancing assignment that generate the same matching as of using the lazy greedy in "src/loadBalSimple.cpp" and the application file in"apps/load_balance_test_simple.cpp".
+
+
+
+
