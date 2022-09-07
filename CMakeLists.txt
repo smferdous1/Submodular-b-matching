@@ -1,24 +1,29 @@
-#cmake version setup
-cmake_minimum_required(VERSION 3.1...3.16)
+cmake_minimum_required(VERSION 3.18)
 
-#project set up
-project(ResourceAllocation VERSION 1.0
-    DESCRIPTION "Resource Allocation"
-        LANGUAGES  CXX
-    )
+project(ResourceAllocation VERSION 1.0 LANGUAGES  CXX
+    DESCRIPTION "Resource Allocation")
 
-if(NOT CMAKE_CXX_COMPILER)
-    set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_NO_SYSTEM_FROM_IMPORTED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY ON)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set (CMAKE_BUILD_TYPE Release)
 endif()
 
-# The executable code is here
-add_subdirectory(apps)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  include(CTest)
+endif()
 
-# The compiled library code is here
+option(SUBMOD_ENABLE_TESTS "Enable Unit Tests" ON)
+
+# Add sources
 add_subdirectory(src)
 
-# Testing only available if this is the main app
-# Emergency override MODERN_CMAKE_BUILD_TESTING provided as well
-if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_TESTING) AND BUILD_TESTING)
-    add_subdirectory(tests)
+# Add tests
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND SUBMOD_ENABLE_TESTS AND BUILD_TESTING)
+  add_subdirectory(tests)
 endif()
